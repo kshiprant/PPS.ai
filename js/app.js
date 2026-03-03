@@ -122,6 +122,7 @@ function sendMessage() {
   if(matches.length > 0) {
     matches.forEach(f => {
       let formatted = `Fraud Pattern: ${f.name}\n`;
+
       if(f.countries) formatted += `• Countries: ${f.countries.join(", ")}\n`;
       if(f.billingCountries) formatted += `• Billing Countries: ${f.billingCountries.join(", ")}\n`;
       if(f.hotelCountries) formatted += `• Hotel Countries: ${f.hotelCountries.join(", ")}\n`;
@@ -136,6 +137,7 @@ function sendMessage() {
       if(f.cardholderDifferent) formatted += `• Cardholder differs from guest: Yes\n`;
       if(f.billingStateDiff) formatted += `• Billing state different from hotel state: Yes\n`;
       if(f.addressSingleUnit) formatted += `• Address is single unit: Yes\n`;
+
       response += formatted + "\n";
     });
   }
