@@ -177,16 +177,28 @@ function sendMessage() {
 
 // --- STARTING AI MESSAGE AND QUICK BUTTONS ---
 function initChat() {
+  // Pinned drawer prompts
+  drawer.innerHTML = `
+    <h3>Prompts</h3>
+    <ul>
+      <li>Type a country name to see all fraud patterns related to it.</li>
+      <li>Type "Visa" or "MasterCard" to get all related fraud patterns.</li>
+      <li>Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.</li>
+      <li>Type a Chargeback code to get its meaning or type "Chargeback" to get all.</li>
+      <li>Type an ECI value (01,02,05,06...) to get its meaning.</li>
+    </ul>
+  `;
+
   // Starting AI greeting
   addBubble("bot", "Hey! What do you want to learn today?");
 
-  // Quick option buttons
+  // Quick option buttons (only Chargeback and AVS)
   const optionsContainer = document.createElement("div");
   optionsContainer.style.display = "flex";
   optionsContainer.style.justifyContent = "space-around";
   optionsContainer.style.marginTop = "8px";
 
-  const options = ["Fraud Prevention", "Chargeback reason code", "AVS", "ECI"];
+  const options = ["Chargeback reason code", "AVS"]; // Removed Fraud Prevention and ECI
   options.forEach(opt => {
     const btn = document.createElement("button");
     btn.textContent = opt;
