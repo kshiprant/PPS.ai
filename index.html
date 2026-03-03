@@ -9,7 +9,8 @@
 </head>
 <body>
   <div id="container" class="light">
-    <!-- HEADER -->
+
+    <!-- Header -->
     <header class="header">
       <div class="logo">FA.bot</div>
       <div class="settings-container">
@@ -28,22 +29,24 @@
       </div>
     </header>
 
-    <!-- PROMPTS DRAWER -->
-    <div id="prompts-drawer" class="drawer closed">
-      <div class="drawer-header" id="drawer-toggle">▼ Prompts</div>
+    <!-- Prompts Drawer -->
+    <div id="prompts-drawer" class="closed">
+      <div id="drawer-toggle">Prompts ▼</div>
       <div class="drawer-content">
-        <p>• Type a country name to see all fraud patterns related to it.</p>
-        <p>• Type "Visa" or "MasterCard" to get all related fraud patterns.</p>
-        <p>• Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.</p>
-        <p>• Type a Chargeback code to get its meaning or type "Chargeback" to get all.</p>
-        <p>• Type an ECI value (01,02,05,06...) to get its meaning.</p>
+        <ul>
+          <li>Type a country name to see all fraud patterns related to it.</li>
+          <li>Type "Visa" or "MasterCard" to get all related fraud patterns.</li>
+          <li>Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.</li>
+          <li>Type a Chargeback code to get its meaning or type "Chargeback" to get all.</li>
+          <li>Type an ECI value (01,02,05,06...) to get its meaning.</li>
+        </ul>
       </div>
     </div>
 
-    <!-- CHAT PANEL -->
+    <!-- Chat Panel -->
     <main class="chat-panel" id="chat-panel"></main>
 
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="input-container">
       <input type="text" id="chat-input" placeholder="Type your query..." />
       <button id="send-btn">Send</button>
