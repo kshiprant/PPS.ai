@@ -88,6 +88,35 @@ function addBubble(sender, text) {
   chatPanel.scrollTop = chatPanel.scrollHeight;
 }
 
+// Smarter search function for fraud patterns
+function getFraudMatches(input) {
+  const lowerInput = input.toLowerCase();
+  return fraudPatterns.filter(f => {
+    // Name match
+    if(f.name.toLowerCase().includes(lowerInput)) return true;
+
+    // Countries
+    if(f.countries && f.countries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
+
+    // Hotels
+    if(f.hotels) {
+      const hotelsArr = Array.isArray(f.hotels) ? f.hotels : [f.hotels];
+      if(hotelsArr.some(h => lowerInput.includes(h.toLowerCase()))) return true;
+    }
+
+    // Billing / hotel countries
+    if(f.billingCountries && f.billingCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
+    if(f.hotelCountries && f.hotelCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
+
+    // Email regex
+    if(f.emailPattern && f.emailPattern.test(input)) return true;
+
+    // Any other custom field could be added here
+
+    return false;
+  });
+}
+
 function sendMessage() {
   const text = chatInput.value.trim();
   if(!text) return;
@@ -96,15 +125,33 @@ function sendMessage() {
 
   let response = "";
 
-  const fp = fraudPatterns.find(f => text.toLowerCase().includes(f.name.toLowerCase()));
-  if(fp) response += `Fraud Pattern Found: ${JSON.stringify(fp,null,2)}\n`;
-  if(eciValues[text]) response += `ECI Value ${text}: ${eciValues[text]}\n`;
-  if(avsResponses[text]) {
-    const avs = avsResponses[text];
-    response += `AVS Response ${text}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
+  // FRAUD PATTERNS
+  const matches = getFraudMatches(text);
+  if(matches.length > 0) {
+    matches.forEach(f => {
+      response += `Fraud Pattern Found: ${JSON.stringify(f,null,2)}\n`;
+    });
   }
-  if(chargebackCodes[text]) response += `Chargeback Code ${text}: ${chargebackCodes[text]}\n`;
+
+  // ECI
+  for(const key in eciValues) {
+    if(text.includes(key)) response += `ECI Value ${key}: ${eciValues[key]}\n`;
+  }
+
+  // AVS
+  const textUpper = text.toUpperCase();
+  for(const key in avsResponses) {
+    if(textUpper.includes(key)) {
+      const avs = avsResponses[key];
+      response += `AVS Response ${key}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
+    }
+  }
+
+  // Chargeback Codes
+  for(const key in chargebackCodes) {
+    if(text.includes(key)) response += `Chargeback Code ${key}: ${chargebackCodes[key]}\n`;
+  }
 
   if(response === "") response = "No matching data found.";
   addBubble("bot", response);
-}
+  }
