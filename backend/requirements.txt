@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+psycopg2-binary   # for PostgreSQL
+python-multipart   # if you want file uploads later
