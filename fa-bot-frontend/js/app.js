@@ -54,7 +54,7 @@ function sendMessage() {
   addBubble("user", text);
   chatInput.value = "";
 
-  // Replace with your live backend URL
+  // Make sure you replace this with your actual backend URL
   axios.get(`https://YOUR_BACKEND_URL/fraud?keyword=${encodeURIComponent(text)}`)
     .then(res => addBubble("bot", JSON.stringify(res.data.results, null, 2)))
     .catch(err => addBubble("bot", "Error fetching response"));
