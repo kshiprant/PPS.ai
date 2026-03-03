@@ -169,11 +169,36 @@ function sendMessage() {
   addBubble("bot", response);
 }
 
-// --- STARTING AI MESSAGE AND QUICK BUTTONS ---
+// --- STARTING AI MESSAGE, QUICK BUTTONS & PROMPTS DRAWER ---
 function initChat() {
-  // Pinned Prompts description
-  const pinned = `Prompts:\n• Type a country name to see all fraud patterns related to it.\n• Type "Visa" or "MasterCard" to get all related fraud patterns.\n• Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.\n• Type a Chargeback code to get its meaning or type "Chargeback" to get all.\n• Type an ECI value (01,02,05,06...) to get its meaning.\n`;
-  addBubble("bot", pinned);
+  // Prompts drawer
+  const drawer = document.createElement("div");
+  drawer.className = "drawer closed";
+  drawer.innerHTML = `
+    <div class="drawer-header">
+      <span>Prompts</span>
+      <button id="drawer-toggle">▼</button>
+    </div>
+    <div class="drawer-content">
+      <ul>
+        <li>Type a country name to see all fraud patterns related to it.</li>
+        <li>Type "Visa" or "MasterCard" to get all related fraud patterns.</li>
+        <li>Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.</li>
+        <li>Type a Chargeback code to get its meaning or type "Chargeback" to get all.</li>
+        <li>Type an ECI value (01,02,05,06...) to get its meaning.</li>
+      </ul>
+    </div>
+  `;
+  chatPanel.appendChild(drawer);
+
+  // Drawer toggle
+  const drawerToggle = drawer.querySelector("#drawer-toggle");
+  drawerToggle.addEventListener("click", () => {
+    drawer.classList.toggle("closed");
+  });
+
+  // Pinned Prompts description (also inside chat)
+  addBubble("bot", "Prompts are available above in the drawer.");
 
   // Starting AI greeting
   addBubble("bot", "Hey! What do you want to learn today?");
@@ -196,7 +221,6 @@ function initChat() {
     btn.style.color = "#fff";
     btn.style.fontSize = "14px";
     btn.addEventListener("click", () => {
-      // Simulate user sending this as a message
       chatInput.value = opt;
       sendMessage();
     });
