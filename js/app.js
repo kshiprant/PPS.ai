@@ -88,35 +88,25 @@ function addBubble(sender, text) {
   chatPanel.scrollTop = chatPanel.scrollHeight;
 }
 
-// Smarter search function for fraud patterns
+// Smarter search function
 function getFraudMatches(input) {
   const lowerInput = input.toLowerCase();
   return fraudPatterns.filter(f => {
-    // Name match
     if(f.name.toLowerCase().includes(lowerInput)) return true;
-
-    // Countries
     if(f.countries && f.countries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
-
-    // Hotels
+    if(f.billingCountries && f.billingCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
+    if(f.hotelCountries && f.hotelCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
     if(f.hotels) {
       const hotelsArr = Array.isArray(f.hotels) ? f.hotels : [f.hotels];
       if(hotelsArr.some(h => lowerInput.includes(h.toLowerCase()))) return true;
     }
-
-    // Billing / hotel countries
-    if(f.billingCountries && f.billingCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
-    if(f.hotelCountries && f.hotelCountries.some(c => lowerInput.includes(c.toLowerCase()))) return true;
-
-    // Email regex
+    if(f.cards && f.cards.some(c => lowerInput.includes(c.toLowerCase()))) return true;
     if(f.emailPattern && f.emailPattern.test(input)) return true;
-
-    // Any other custom field could be added here
-
     return false;
   });
 }
 
+// Main send message function
 function sendMessage() {
   const text = chatInput.value.trim();
   if(!text) return;
@@ -124,34 +114,40 @@ function sendMessage() {
   chatInput.value = "";
 
   let response = "";
+  const lowerText = text.toLowerCase();
+  const upperText = text.toUpperCase();
 
-  // FRAUD PATTERNS
-  const matches = getFraudMatches(text);
+  // FRAUD PATTERNS (keywords)
+  const matches = getFraudMatches(lowerText);
   if(matches.length > 0) {
     matches.forEach(f => {
       response += `Fraud Pattern Found: ${JSON.stringify(f,null,2)}\n`;
     });
   }
 
-  // ECI
-  for(const key in eciValues) {
-    if(text.includes(key)) response += `ECI Value ${key}: ${eciValues[key]}\n`;
-  }
+  // ECI direct code
+  if(eciValues[text]) response += `ECI Value ${text}: ${eciValues[text]}\n`;
 
-  // AVS
-  const textUpper = text.toUpperCase();
-  for(const key in avsResponses) {
-    if(textUpper.includes(key)) {
+  // AVS code
+  if(avsResponses[upperText]) {
+    const avs = avsResponses[upperText];
+    response += `AVS Response ${upperText}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
+  } else if(lowerText.includes("avs")) {
+    for(const key in avsResponses) {
       const avs = avsResponses[key];
-      response += `AVS Response ${key}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
+      response += `AVS ${key}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
     }
   }
 
-  // Chargeback Codes
-  for(const key in chargebackCodes) {
-    if(text.includes(key)) response += `Chargeback Code ${key}: ${chargebackCodes[key]}\n`;
+  // Chargeback code
+  if(chargebackCodes[text]) {
+    response += `Chargeback Code ${text}: ${chargebackCodes[text]}\n`;
+  } else if(lowerText.includes("chargeback")) {
+    for(const key in chargebackCodes) {
+      response += `Chargeback ${key}: ${chargebackCodes[key]}\n`;
+    }
   }
 
   if(response === "") response = "No matching data found.";
   addBubble("bot", response);
-  }
+                                                        }
