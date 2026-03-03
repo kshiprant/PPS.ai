@@ -23,6 +23,8 @@ body, html { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; heigh
 .logo { font-weight: bold; font-size: 20px; }
 .settings-container { position: relative; }
 .menu-icon { font-size: 24px; cursor: pointer; }
+
+/* Settings dropdown (curved + shadow) */
 .settings-dropdown {
   position: absolute;
   top: 60px;
@@ -30,12 +32,18 @@ body, html { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; heigh
   background-color: #fff;
   color: #000;
   border: 1px solid #ccc;
+  border-radius: 12px;              /* curved edges */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* subtle shadow */
   padding: 12px;
   width: 220px;
   display: none;
   z-index: 101;
 }
-#container.dark .settings-dropdown { background-color: #1f2937; color: #fff; border-color: #555; }
+#container.dark .settings-dropdown { 
+  background-color: #1f2937; 
+  color: #fff; 
+  border-color: #555; 
+}
 
 /* Chat panel */
 .chat-panel {
