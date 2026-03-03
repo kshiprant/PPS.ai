@@ -168,3 +168,44 @@ function sendMessage() {
   if(response === "") response = "No matching data found.";
   addBubble("bot", response);
 }
+
+// --- STARTING AI MESSAGE AND QUICK BUTTONS ---
+function initChat() {
+  // Pinned Prompts description
+  const pinned = `Prompts:\n• Type a country name to see all fraud patterns related to it.\n• Type "Visa" or "MasterCard" to get all related fraud patterns.\n• Type an AVS code (A-Z) to get its meaning or type "AVS" to get all.\n• Type a Chargeback code to get its meaning or type "Chargeback" to get all.\n• Type an ECI value (01,02,05,06...) to get its meaning.\n`;
+  addBubble("bot", pinned);
+
+  // Starting AI greeting
+  addBubble("bot", "Hey! What do you want to learn today?");
+
+  // Quick option buttons
+  const optionsContainer = document.createElement("div");
+  optionsContainer.style.display = "flex";
+  optionsContainer.style.justifyContent = "space-around";
+  optionsContainer.style.marginTop = "8px";
+
+  const options = ["Fraud Prevention", "Chargeback reason code", "AVS", "ECI"];
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.style.padding = "6px 12px";
+    btn.style.borderRadius = "12px";
+    btn.style.border = "none";
+    btn.style.cursor = "pointer";
+    btn.style.backgroundColor = "#4f46e5";
+    btn.style.color = "#fff";
+    btn.style.fontSize = "14px";
+    btn.addEventListener("click", () => {
+      // Simulate user sending this as a message
+      chatInput.value = opt;
+      sendMessage();
+    });
+    optionsContainer.appendChild(btn);
+  });
+
+  chatPanel.appendChild(optionsContainer);
+  chatPanel.scrollTop = chatPanel.scrollHeight;
+}
+
+// Initialize chat on load
+window.addEventListener("load", initChat);
