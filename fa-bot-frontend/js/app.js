@@ -6,8 +6,6 @@ const menuIcon = document.getElementById("menu-icon");
 const settingsDropdown = document.getElementById("settings-dropdown");
 const themeLightBtn = document.getElementById("theme-light");
 const themeDarkBtn = document.getElementById("theme-dark");
-const viewMobileBtn = document.getElementById("view-mobile");
-const viewDesktopBtn = document.getElementById("view-desktop");
 const chatColorInput = document.getElementById("chat-color");
 const container = document.getElementById("container");
 
@@ -20,10 +18,6 @@ menuIcon.addEventListener("click", () => {
 themeLightBtn.addEventListener("click", () => container.className = "light");
 themeDarkBtn.addEventListener("click", () => container.className = "dark");
 
-// View mode toggle
-viewMobileBtn.addEventListener("click", () => chatPanel.classList.remove("desktop"));
-viewDesktopBtn.addEventListener("click", () => chatPanel.classList.add("desktop"));
-
 // Chat color change
 chatColorInput.addEventListener("input", (e) => {
   document.querySelectorAll(".bubble.user").forEach(b => b.style.backgroundColor = e.target.value);
@@ -33,7 +27,7 @@ chatColorInput.addEventListener("input", (e) => {
 sendBtn.addEventListener("click", sendMessage);
 chatInput.addEventListener("keydown", (e) => e.key === "Enter" && sendMessage());
 
-// --------- DATABASES ---------
+// DATABASES (fraud patterns, AVS, ECI, chargeback)
 const fraudPatterns = [
   { name: "BOOKED.NET", countries: ["Australia","Germany","Spain","Singapore"], emailPattern: /.+\..+@.+\..+/, hotels: "link search bad", cards: ["Visa","MasterCard"] },
   { name: "TRAVELATED-ONLINE", countries: ["Mexico","Singapore","Indonesia"], hotels: ["Mexico","Singapore","Indonesia","Turkey"], billingMismatch: true, cards: ["Visa","MasterCard"] },
@@ -78,7 +72,7 @@ const chargebackCodes = {
   "4860": "Mastercard – Credit Not Processed"
 };
 
-// --------- FUNCTIONS ---------
+// FUNCTIONS
 function addBubble(sender, text) {
   const bubbleContainer = document.createElement("div");
   bubbleContainer.className = "bubble-container " + (sender === "user" ? "user" : "bot");
@@ -102,22 +96,15 @@ function sendMessage() {
 
   let response = "";
 
-  // Check Fraud Patterns
   const fp = fraudPatterns.find(f => text.toLowerCase().includes(f.name.toLowerCase()));
   if(fp) response += `Fraud Pattern Found: ${JSON.stringify(fp,null,2)}\n`;
-
-  // Check ECI
   if(eciValues[text]) response += `ECI Value ${text}: ${eciValues[text]}\n`;
-
-  // Check AVS
   if(avsResponses[text]) {
     const avs = avsResponses[text];
     response += `AVS Response ${text}: Visa: ${avs.Visa}, MasterCard: ${avs.MasterCard}\n`;
   }
-
-  // Check Chargeback
   if(chargebackCodes[text]) response += `Chargeback Code ${text}: ${chargebackCodes[text]}\n`;
 
   if(response === "") response = "No matching data found.";
   addBubble("bot", response);
-    }
+}
