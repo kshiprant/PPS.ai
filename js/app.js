@@ -27,7 +27,7 @@ chatColorInput.addEventListener("input", (e) => {
 sendBtn.addEventListener("click", sendMessage);
 chatInput.addEventListener("keydown", (e) => e.key === "Enter" && sendMessage());
 
-// DATABASES (fraud patterns, AVS, ECI, chargeback)
+// DATABASES
 const fraudPatterns = [
   { name: "BOOKED.NET", countries: ["Australia","Germany","Spain","Singapore"], emailPattern: /.+\..+@.+\..+/, hotels: "link search bad", cards: ["Visa","MasterCard"] },
   { name: "TRAVELATED-ONLINE", countries: ["Mexico","Singapore","Indonesia"], hotels: ["Mexico","Singapore","Indonesia","Turkey"], billingMismatch: true, cards: ["Visa","MasterCard"] },
@@ -117,11 +117,26 @@ function sendMessage() {
   const lowerText = text.toLowerCase();
   const upperText = text.toUpperCase();
 
-  // FRAUD PATTERNS (keywords)
+  // FRAUD PATTERNS (bullet points)
   const matches = getFraudMatches(lowerText);
   if(matches.length > 0) {
     matches.forEach(f => {
-      response += `Fraud Pattern Found: ${JSON.stringify(f,null,2)}\n`;
+      let formatted = `Fraud Pattern: ${f.name}\n`;
+      if(f.countries) formatted += `• Countries: ${f.countries.join(", ")}\n`;
+      if(f.billingCountries) formatted += `• Billing Countries: ${f.billingCountries.join(", ")}\n`;
+      if(f.hotelCountries) formatted += `• Hotel Countries: ${f.hotelCountries.join(", ")}\n`;
+      if(f.hotels) {
+        const hotelsArr = Array.isArray(f.hotels) ? f.hotels : [f.hotels];
+        formatted += `• Hotel Info: ${hotelsArr.join(", ")}\n`;
+      }
+      if(f.cards) formatted += `• Cards Used: ${f.cards.join(", ")}\n`;
+      if(f.emailPattern) formatted += `• Email Pattern: Yes\n`;
+      if(f.billingInvalid) formatted += `• Billing Details Invalid: Yes\n`;
+      if(f.billingMismatch) formatted += `• Billing Mismatch: Yes\n`;
+      if(f.cardholderDifferent) formatted += `• Cardholder differs from guest: Yes\n`;
+      if(f.billingStateDiff) formatted += `• Billing state different from hotel state: Yes\n`;
+      if(f.addressSingleUnit) formatted += `• Address is single unit: Yes\n`;
+      response += formatted + "\n";
     });
   }
 
@@ -150,4 +165,4 @@ function sendMessage() {
 
   if(response === "") response = "No matching data found.";
   addBubble("bot", response);
-                                                        }
+}
